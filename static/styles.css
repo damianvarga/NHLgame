@@ -1,0 +1,150 @@
+/* Všeobecné nastavenia */
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(120deg, #1e3c72, #2a5298); /* modrý gradient */
+    color: #fff;
+    text-align: center;
+    margin: 0;
+    padding: 20px;
+}
+
+h1 {
+    margin-bottom: 20px;
+    font-size: 2.5rem;
+    text-shadow: 2px 2px 6px rgba(0,0,0,0.6);
+}
+
+/* Tlačidlá na výber veľkosti mriežky */
+#grid-buttons {
+    margin-bottom: 20px;
+}
+
+#grid-buttons button {
+    background: #ffcc00;
+    border: none;
+    padding: 10px 20px;
+    margin: 5px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+#grid-buttons button:hover {
+    transform: scale(1.1);
+    background: #ffdb4d;
+}
+
+/* Tabuľka */
+#grid {
+    margin: 0 auto;
+    border-collapse: collapse;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    background: #fff;
+    color: #000;
+}
+
+#grid th, #grid td {
+    border: 2px solid #444;
+    width: 100px;
+    height: 100px;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/* Hlavičky riadkov a stĺpcov */
+#grid th {
+    background: #222;
+    color: #fff;
+}
+
+/* Polia tabuľky */
+#grid td {
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.1s ease;
+}
+
+#grid td:hover {
+    background: #f1f1f1;
+    transform: scale(1.05);
+}
+
+/* Efekt pri správnej odpovedi */
+#grid td.correct {
+    background: #00c853;
+    color: white;
+    animation: pop 0.3s ease;
+}
+
+/* Efekt pri nesprávnej odpovedi */
+#grid td.incorrect {
+    background: #d32f2f;
+    color: white;
+    animation: shake 0.4s ease;
+}
+
+/* Animácie */
+@keyframes pop {
+    0% { transform: scale(0.8); }
+    100% { transform: scale(1); }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+
+/* Hangman keyboard styles aligned with index */
+.keyboard {
+    max-width: 900px;
+    margin: 20px auto;
+}
+.keyboard .row {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin: 6px 0;
+}
+.key {
+    background: #ffcc00;
+    border: none;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+.key:hover {
+    transform: scale(1.1);
+    background: #ffdb4d;
+}
+
+/* Hangman word display */
+.word-display {
+    font-size: 2rem;
+    letter-spacing: 0.5rem;
+    margin: 20px auto 10px;
+    display: inline-block;
+    padding: 10px 14px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.08);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+.space-gap { 
+    margin: 0 1rem; 
+    display: inline-block; 
+}
+
+/* Hangman error counter */
+.error-counter {
+    margin: 8px auto 16px;
+    font-size: 1.1rem;
+    padding: 6px 10px;
+    display: inline-block;
+    background: rgba(0,0,0,0.2);
+    border-radius: 6px;
+}

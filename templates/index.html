@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Puckdoku Clone</title>
+    <link rel="stylesheet" href="../static/styles.css">
+</head>
+<body>
+    <h1>Puckdoku Mini</h1>
+    <div id="grid-buttons">
+        {% for n in range(2, 6) %}
+        <button onclick="setSize({{n}})">{{ n }}x{{ n }}</button>
+        {% endfor %}
+    </div>
+    
+    <script>
+        function setSize(n) {
+            fetch(`/new-game/${n}`, { method: "POST" })
+                .then(res => res.json())
+                .then(() => location.href = "/");  // presmerovanie na hlavnú stránku
+        }
+    </script>
+    
+    <table id="grid">
+        
+        
+        <!-- Horný riadok s názvami stĺpcov -->
+        <tr>
+            <th></th>
+            {% for team in col_teams %}
+            <th>{{ team }}</th>
+            {% endfor %}
+        </tr>
+
+        <!-- Riadky s názvami tímov -->
+        {% for row_index, row_team in row_teams %}
+        <tr>
+            <th>{{ row_team }}</th>
+            {% for c in range(col_teams|length) %}
+            <td data-row="{{ row_index }}" 
+                data-col="{{ c }}" 
+                data-row-team="{{ row_team }}" 
+                data-col-team="{{ col_teams[c] }}">
+            </td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+        
+    </table>
+   
+    <script src="/static/script.js?v={{ timestamp }}"></script>
+    </body>
+</html>
