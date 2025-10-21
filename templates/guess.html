@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/styles.css">
+    <title>Guess The Player</title>
+</head>
+<body>
+    <!--
+        display nhl team names from guess.py for Mike Sillinger
+    -->
+        <div id="team-names">
+            <h3>Teams played for:</h3>
+            <ul>
+                {% for team in teams %}
+                {{ team }} <br>
+                {% endfor %}
+            </ul>
+        </div>
+        <form action="/guess" method="post">
+            <input type="text" name="player_name" placeholder="Enter player name">
+            <button type="submit" class="grid-buttons">Guess</button>
+        </form>
+        <!-- TODO: implement this -->
+        <!--
+        implement a check, if the player is correct. use teams from guess_player-->
+
+</body>
+</html>

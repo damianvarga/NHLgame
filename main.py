@@ -10,6 +10,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 import playerCheck
+import guess
 
 # Run: uvicorn main:app --reload --port 8000
 
@@ -219,6 +220,33 @@ def hangman(request: Request):
       <script src="{{ url_for('static', path='/hangman.js') }}" defer></script>
     """
     return templates.TemplateResponse("hangman.html", {"request": request})
+
+
+@router.get("/guess", response_class=HTMLResponse)
+@router.post("/guess", response_class=HTMLResponse)
+def guess_player(request: Request):
+    """
+    Render the Guess page (templates/guess.html).
+    Requires that your template links static assets using:
+        <link rel="stylesheet" href="{{ url_for('static', path='/styles.css') }}">
+        <script src="{{ url_for('static', path='/script.js') }}" defer></script>
+    # """
+    # name = request.query_params.get("name")
+    # teams = request.query_params.getlist("teams")
+    name, teams = guess.get_journeyman()
+    print(teams)
+    if  name and teams:
+        return templates.TemplateResponse(
+    "guess.html",
+    {
+        "request": request,
+        "player_name": name,
+        "teams": teams
+    }
+)
+
+
+
 
 # Make sure the app actually uses the router (this is what was missing)
 app.include_router(router)
