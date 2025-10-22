@@ -3,8 +3,9 @@ import random
 import string
 from typing import Optional, Tuple, List
 
+from flask_sqlalchemy import SQLAlchemy
 import requests
-from fastapi import FastAPI, Request, APIRouter
+from fastapi import FastAPI, Request, APIRouter, Depends
 from fastapi.responses import JSONResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -247,6 +248,39 @@ def guess_player(request: Request):
 
 
 
+from sqlalchemy import create_engine, Column, Integer, String
+from sqlalchemy.orm import sessionmaker, declarative_base, Session
 
+
+DATABASE_URL = None# dopln lokalne
+engine = create_engine(DATABASE_URL)
+SessionLocal = sessionmaker(bind=engine)
+Base = declarative_base()
+
+class Word(Base):
+    __tablename__ = "hangman_words"  # table name in PostgreSQL
+    id = Column(Integer, primary_key=True)
+    word = Column(String)  # matches the 'word' column in your table
+    type = Column(String)  # optional, matches 'type' column
+
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+    
+
+@app.get("/hangman/penalties", response_class=HTMLResponse)
+def show_words(request: Request, db: Session = Depends(get_db)):
+    words = db.query(Word).all()  # this returns a list of Word objects
+    return templates.TemplateResponse(
+        "hangman.html",
+        {
+            "request": request,
+            "words": words  # in template, access each object's 'word' attribute
+        }
+    )
 # Make sure the app actually uses the router (this is what was missing)
 app.include_router(router)

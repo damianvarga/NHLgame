@@ -50,7 +50,12 @@
                 <button type="button" class="key" data-letter="Z">Z</button>
             </div>
         </div>
-
+        <h1>Words</h1>
+        <ul>
+        {% for w in words %}
+            <li>{{ w.word }}</li>
+        {% endfor %}
+        </ul>
         <noscript>
             JavaScript is required to play Hangman. Please enable JavaScript.
         </noscript>
