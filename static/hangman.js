@@ -5,30 +5,32 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (!displayEl) return;
 
   displayEl.setAttribute("aria-live", "polite");
-  displayEl.textContent = "Loading player...";
+  displayEl.textContent = "Loading...";
+  const isPenaltiesMode = window.appConfig.penaltiesMode;
 
-  let name = null;
+  let word = null;
   try {
-    const res = await fetch("/api/random-player", { headers: { Accept: "application/json" } });
+    const endpoint = isPenaltiesMode ? "/api/random-penalty" : "/api/random-player";
+    const res = await fetch(endpoint, { headers: { Accept: "application/json" } });
     if (!res.ok) throw new Error(`Request failed: ${res.status}`);
     const data = await res.json();
-    name = (data && data.name) || null;
+    word = isPenaltiesMode ? data.word : data.name;
   } catch (e) {
-    console.warn("Falling back to default name due to API error:", e);
-    name = "Sidney Crosby"; // fallback so the UI still demonstrates behavior
+    console.warn("Falling back to default value:", e);
+    word = isPenaltiesMode ? "TRIPPING" : "Sidney Crosby";
   }
 
-  if (!name) {
-    displayEl.textContent = "Failed to load player. Please refresh.";
+  if (!word) {
+    displayEl.textContent = "Failed to load the word. Please refresh.";
     return;
   }
 
-  displayEl.dataset.playerName = name;
+  displayEl.dataset.playerName = word;
 
   displayEl.innerHTML = "";
   const frag = document.createDocumentFragment();
 
-  for (const ch of name) {
+  for (const ch of word) {
     if (ch === " ") {
       const gap = document.createElement("span");
       gap.className = "space-gap";
@@ -161,6 +163,17 @@ document.addEventListener('DOMContentLoaded', () => {
       return 'Sidney Crosby';
     }
   }
+  async function fetchRandomPenalty() {
+    try {
+      const res = await fetch('/api/random-penalty', { headers: { Accept: 'application/json' } });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      return (data && data.name) || null;
+    } catch (err) {
+      console.warn('Falling back to default penalty due to API error:', err);
+      return 'Tripping';
+    }
+  }
 
   function attachClickHandlers() {
     if (!keyboardEl) return;
@@ -201,12 +214,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function bootstrap() {
     displayEl.setAttribute('aria-live', 'polite');
-    displayEl.textContent = 'Loading player...';
+    displayEl.textContent = 'Loading...';
     updateCounter();
     attachClickHandlers();
-
-    const name = await fetchRandomPlayerName();
-    renderMasked(name);
+    if (window.appConfig.penaltiesMode) {
+      const name = await fetchRandomPenalty();
+      renderMasked(name);
+    } else {
+      const name = await fetchRandomPlayerName();
+      renderMasked(name);
+    }
   }
 
   // Start after DOM is ready

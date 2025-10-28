@@ -3,7 +3,6 @@ import random
 import string
 from typing import Optional, Tuple, List
 
-from flask_sqlalchemy import SQLAlchemy
 import requests
 from fastapi import FastAPI, Request, APIRouter, Depends
 from fastapi.responses import JSONResponse, HTMLResponse
@@ -248,11 +247,11 @@ def guess_player(request: Request):
 
 
 
-from sqlalchemy import create_engine, Column, Integer, String
+from sqlalchemy import create_engine, Column, Integer, String, func
 from sqlalchemy.orm import sessionmaker, declarative_base, Session
 
 
-DATABASE_URL = None# dopln lokalne
+DATABASE_URL = "postgresql://postgres:xp&x8J8S@localhost/puckdoku_clone"
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(bind=engine)
 Base = declarative_base()
@@ -272,15 +271,27 @@ def get_db():
         db.close()
     
 
-@app.get("/hangman/penalties", response_class=HTMLResponse)
+@router.get("/hangman/penalties", response_class=HTMLResponse)
 def show_words(request: Request, db: Session = Depends(get_db)):
-    words = db.query(Word).all()  # this returns a list of Word objects
+    penalty = api_random_penalty(db)
+    # Render hangman but mark that we're in penalties mode; JS will fetch a random penalty word.
     return templates.TemplateResponse(
         "hangman.html",
         {
             "request": request,
-            "words": words  # in template, access each object's 'word' attribute
+            "penalties_mode": True,
+            'words': penalty
         }
     )
+
+@router.get("/api/random-penalty")
+def api_random_penalty(db: Session = Depends(get_db)):
+    # Return a single random word from hangman_words table
+    word_obj = db.query(Word).order_by(func.random()).first()
+    if not word_obj:
+        # safe fallback to keep UI functional
+        return {"word": "TRIPPING"}
+    return {"word": word_obj.word}
+
 # Make sure the app actually uses the router (this is what was missing)
 app.include_router(router)
