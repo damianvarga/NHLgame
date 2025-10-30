@@ -10,7 +10,7 @@
         penaltiesMode: {{ 'true' if penalties_mode else 'false' }}
     };
     </script>
-    <script src="{{ url_for('static', path='hangman.js') }}" defer></script>
+    <script src="{{ url_for('static', path='/hangman.js') }}" defer></script>
 </head>
 <body>
     <main class="container">
@@ -70,7 +70,6 @@
         penaltiesMode: {{ 'true' if penalties_mode else 'false' }}
     };
     </script>
-    <!--<script src="{{ url_for('static', path='/hangman.js') }}" defer></script>-->
 </body>
 </html>
 

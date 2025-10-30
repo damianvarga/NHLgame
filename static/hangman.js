@@ -168,7 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const res = await fetch('/api/random-penalty', { headers: { Accept: 'application/json' } });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
-      return (data && data.name) || null;
+      return (data && data.word) || null;
     } catch (err) {
       console.warn('Falling back to default penalty due to API error:', err);
       return 'Tripping';
@@ -217,7 +217,7 @@ document.addEventListener('DOMContentLoaded', () => {
     displayEl.textContent = 'Loading...';
     updateCounter();
     attachClickHandlers();
-    if (window.appConfig.penaltiesMode) {
+    if (window.appConfig && window.appConfig.penaltiesMode) {
       const name = await fetchRandomPenalty();
       renderMasked(name);
     } else {
@@ -225,7 +225,8 @@ document.addEventListener('DOMContentLoaded', () => {
       renderMasked(name);
     }
   }
-
+  
+  
   // Start after DOM is ready
   bootstrap();
 });

@@ -251,7 +251,7 @@ from sqlalchemy import create_engine, Column, Integer, String, func
 from sqlalchemy.orm import sessionmaker, declarative_base, Session
 
 
-DATABASE_URL = "postgresql://postgres:xp&x8J8S@localhost/puckdoku_clone"
+DATABASE_URL = "db_url"
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(bind=engine)
 Base = declarative_base()
@@ -273,14 +273,12 @@ def get_db():
 
 @router.get("/hangman/penalties", response_class=HTMLResponse)
 def show_words(request: Request, db: Session = Depends(get_db)):
-    penalty = api_random_penalty(db)
     # Render hangman but mark that we're in penalties mode; JS will fetch a random penalty word.
     return templates.TemplateResponse(
         "hangman.html",
         {
             "request": request,
-            "penalties_mode": True,
-            'words': penalty
+            "penalties_mode": True
         }
     )
 
