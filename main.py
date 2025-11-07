@@ -4,7 +4,7 @@ import string
 from typing import Optional, Tuple, List
 
 import requests
-from fastapi import FastAPI, Request, APIRouter, Depends
+from fastapi import FastAPI, Request, APIRouter, Depends, Form
 from fastapi.responses import JSONResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -219,31 +219,47 @@ def hangman(request: Request):
       <link rel="stylesheet" href="{{ url_for('static', path='/styles.css') }}">
       <script src="{{ url_for('static', path='/hangman.js') }}" defer></script>
     """
-    return templates.TemplateResponse("hangman.html", {"request": request})
-
+    return templates.TemplateResponse("hangman.html", {"request": request})@router.get("/guess", response_class=HTMLResponse)
 
 @router.get("/guess", response_class=HTMLResponse)
-@router.post("/guess", response_class=HTMLResponse)
-def guess_player(request: Request):
-    """
-    Render the Guess page (templates/guess.html).
-    Requires that your template links static assets using:
-        <link rel="stylesheet" href="{{ url_for('static', path='/styles.css') }}">
-        <script src="{{ url_for('static', path='/script.js') }}" defer></script>
-    # """
-    # name = request.query_params.get("name")
-    # teams = request.query_params.getlist("teams")
+async def guess_get(request: Request):
+    """Display a random journeyman player and their teams."""
     name, teams = guess.get_journeyman()
-    print(teams)
-    if  name and teams:
+    return templates.TemplateResponse(
+        "guess.html",
+        {"request": request, "player_name": name, "teams": teams, "result": None}
+    )
+
+
+@router.post("/guess", response_class=HTMLResponse)
+async def guess_post(
+    request: Request,
+    player_name: str = Form(...),
+    correct_name: str = Form(...),
+    teams: str = Form(None),  # make it optional
+):
+    """Process player guess."""
+    teams_list = []
+    if teams:
+        teams_list = [t.strip() for t in teams.split(",") if t.strip()]
+
+    is_correct = player_name.strip().lower() == correct_name.strip().lower()
+    result = "Correct!" if is_correct else "Incorrect!"
+
+    if is_correct:
+        # Load new random player
+        name, new_teams = guess.get_journeyman()
         return templates.TemplateResponse(
-    "guess.html",
-    {
-        "request": request,
-        "player_name": name,
-        "teams": teams
-    }
-)
+            "guess.html",
+            {"request": request, "player_name": name, "teams": new_teams, "result": result},
+        )
+
+    # If incorrect, show same player and teams again
+    return templates.TemplateResponse(
+        "guess.html",
+        {"request": request, "player_name": correct_name, "teams": teams_list, "result": result},
+    )
+
 
 
 
@@ -251,7 +267,7 @@ from sqlalchemy import create_engine, Column, Integer, String, func
 from sqlalchemy.orm import sessionmaker, declarative_base, Session
 
 
-DATABASE_URL = "db_url"
+DATABASE_URL = "postgresql://postgres:xp&x8J8S@localhost/puckdoku_clone"
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(bind=engine)
 Base = declarative_base()

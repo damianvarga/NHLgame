@@ -16,6 +16,7 @@ def get_journeyman(max_attempts: int = 100):
         # Check if the player has played for at least 5 teams
         teams_played = playerCheck.get_nhl_teams_played(player_id)
         if len(teams_played) >= 5:
+            print(name)
             return name, teams_played
 
     # If no journeyman found after max_attempts

@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
             } else if (data.result === "Incorrect"){
                 alert("Incorrect!");
             } else if (data.result === "Used") {
-                alert("Played already used!");
+                alert("Player already used!");
             }else {
                 alert("Player not found!")
             }
