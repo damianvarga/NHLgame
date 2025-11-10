@@ -5,7 +5,7 @@ from typing import Optional, Tuple, List
 
 import requests
 from fastapi import FastAPI, Request, APIRouter, Depends, Form
-from fastapi.responses import JSONResponse, HTMLResponse
+from fastapi.responses import JSONResponse, HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
@@ -220,14 +220,13 @@ def hangman(request: Request):
       <script src="{{ url_for('static', path='/hangman.js') }}" defer></script>
     """
     return templates.TemplateResponse("hangman.html", {"request": request})@router.get("/guess", response_class=HTMLResponse)
-
 @router.get("/guess", response_class=HTMLResponse)
 async def guess_get(request: Request):
-    """Display a random journeyman player and their teams."""
+    """Start a new game — always fresh player, no result message."""
     name, teams = guess.get_journeyman()
     return templates.TemplateResponse(
         "guess.html",
-        {"request": request, "player_name": name, "teams": teams, "result": None}
+        {"request": request, "player_name": name, "teams": teams, "result": None},
     )
 
 
@@ -236,31 +235,24 @@ async def guess_post(
     request: Request,
     player_name: str = Form(...),
     correct_name: str = Form(...),
-    teams: str = Form(None),  # make it optional
+    teams: str = Form(None),
 ):
-    """Process player guess."""
-    teams_list = []
-    if teams:
-        teams_list = [t.strip() for t in teams.split(",") if t.strip()]
-
+    """Process player's guess."""
+    teams_list = [t.strip() for t in (teams or "").split(",") if t.strip()]
     is_correct = player_name.strip().lower() == correct_name.strip().lower()
-    result = "Correct!" if is_correct else "Incorrect!"
 
     if is_correct:
-        # Load new random player
-        name, new_teams = guess.get_journeyman()
+        # Show 'Correct!' message, JS will reload after 1s
         return templates.TemplateResponse(
             "guess.html",
-            {"request": request, "player_name": name, "teams": new_teams, "result": result},
+            {"request": request, "player_name": correct_name, "teams": teams_list, "result": "Correct!"},
         )
 
-    # If incorrect, show same player and teams again
+    # If incorrect, re-render same player and teams
     return templates.TemplateResponse(
         "guess.html",
-        {"request": request, "player_name": correct_name, "teams": teams_list, "result": result},
+        {"request": request, "player_name": correct_name, "teams": teams_list, "result": "Incorrect!"},
     )
-
-
 
 
 from sqlalchemy import create_engine, Column, Integer, String, func

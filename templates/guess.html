@@ -9,30 +9,37 @@
 <body>
     <div id="team-names">
         <h3>Teams played for:</h3>
-        <ul>
-            {% if teams %}
-                {% for team in teams %}
-                    <li>{{ team }}</li>
-                {% endfor %}
-            {% else %}
-                <li>No team data available</li>
-            {% endif %}
-        </ul>
+        {% if teams %}
+            {% for team in teams %}
+                {{ team }}<br>
+            {% endfor %}
+        {% else %}
+            No team data available
+        {% endif %}
     </div>
 
-    <form action="/guess" method="post">
-        <!-- Hidden inputs -->
+    <form id="guess-form" action="/guess" method="post">
         <input type="hidden" name="correct_name" value="{{ player_name }}">
         <input type="hidden" name="teams" value="{{ ','.join(teams or []) }}">
-
         <input type="text" name="player_name" placeholder="Enter player name" required>
         <button type="submit" class="grid-buttons">Guess</button>
     </form>
 
     {% if result %}
-        <h2 style="color: {% if result == 'Correct!' %}green{% else %}red{% endif %};">
+        <h2 id="result-text"
+            style="color: {% if result == 'Correct!' %}green{% else %}red{% endif %};">
             {{ result }}
         </h2>
     {% endif %}
+
+    <script>
+        // If the server says "Correct!", show it briefly, then reload for a new player
+        const result = "{{ result or '' }}";
+        if (result === "Correct!") {
+            setTimeout(() => {
+                window.location.href = "/guess";
+            }, 1000); // delay in milliseconds (1s)
+        }
+    </script>
 </body>
 </html>

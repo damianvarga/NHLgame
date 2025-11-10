@@ -148,3 +148,8 @@ h1 {
     background: rgba(0,0,0,0.2);
     border-radius: 6px;
 }
+
+ul#team_list {
+    list-style-type: none;
+    padding-left: 0;
+}
