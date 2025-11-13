@@ -17,7 +17,7 @@
             No team data available
         {% endif %}
     </div>
-
+    <br>
     <form id="guess-form" action="/guess" method="post">
         <input type="hidden" name="correct_name" value="{{ player_name }}">
         <input type="hidden" name="teams" value="{{ ','.join(teams or []) }}">
@@ -27,7 +27,7 @@
 
     {% if result %}
         <h2 id="result-text"
-            style="color: {% if result == 'Correct!' %}green{% else %}red{% endif %};">
+            style="color: {% if result == 'Correct!' %}lime{% else %}red{% endif %};">
             {{ result }}
         </h2>
     {% endif %}

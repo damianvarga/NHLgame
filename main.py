@@ -12,6 +12,7 @@ from fastapi.templating import Jinja2Templates
 import playerCheck
 import guess
 
+import httpx
 # Run: uvicorn main:app --reload --port 8000
 
 app = FastAPI()
@@ -299,5 +300,86 @@ def api_random_penalty(db: Session = Depends(get_db)):
         return {"word": "TRIPPING"}
     return {"word": word_obj.word}
 
+
+PLAYER_NAMES = [
+    "Connor McDavid",
+    "Leon Draisaitl",
+    "Sidney Crosby",
+    "Auston Matthews",
+    "David Pastrnak",
+    "Nathan MacKinnon",
+]
+
+async def search_a_player(name: str):
+    """Vyhľadá hráča podľa mena cez NHL Search API."""
+    url = f"https://search.d3.nhle.com/api/v1/search/player?culture=en-us&limit=1&q=\"{name}\""
+    async with httpx.AsyncClient() as client:
+        resp = await client.get(url)
+        data = resp.json()
+    if "players" in data and data["players"]:
+        player = data["players"][0]
+        print(player)
+        return {
+            "id": player.get("id"),
+            "name": player.get("fullName"),
+            "team": player.get("currentTeamName", "Unknown"),
+            "position": player.get("primaryPositionName", ""),
+        }
+    return None
+
+# ✅ HTML frontend
+@app.get("/duel", response_class=HTMLResponse)
+def duel_frontend(request: Request):
+    """Zobrazí HTML stránku hry."""
+    return templates.TemplateResponse("duel.html", {"request": request})
+
+# ✅ API endpoint
+@app.get("/api/duel")
+async def duel_api():
+    """Vracia JSON s dvoma hráčmi a štatistikou."""
+    p1_name, p2_name = random.sample(PLAYER_NAMES, 2)
+    stat = random.choice(["goals", "assists", "points"])
+
+    p1 =  playerCheck.search_player(p1_name)
+    p2 =  playerCheck.search_player(p2_name)
+    if not p1 or not p2:
+        return JSONResponse({"error": "Nepodarilo sa načítať hráčov"}, status_code=500)
+    # Mock štatistiky (nahradíš reálnymi, keď budeš mať endpoint na stats)
+    p1["season"] = "2022-23"
+    p2["season"] = "2022-23"
+
+    for key in ["goals", "assists", "points"]:
+        p1[key] = random.randint(20, 70)
+        p2[key] = random.randint(20, 70)
+
+    return {"player1": p1, "player2": p2, "stat": stat}
+
+
+'''
+
+# 🔹 Mock dáta (v praxi by si mohol načítať reálne štatistiky z CSV alebo API)
+players = [
+    {"name": "Connor McDavid", "team": "Edmonton Oilers", "season": "2022-23", "goals": 64, "assists": 89, "points": 153},
+    {"name": "Leon Draisaitl", "team": "Edmonton Oilers", "season": "2022-23", "goals": 52, "assists": 76, "points": 128},
+    {"name": "Sidney Crosby", "team": "Pittsburgh Penguins", "season": "2022-23", "goals": 33, "assists": 60, "points": 93},
+    {"name": "Auston Matthews", "team": "Toronto Maple Leafs", "season": "2022-23", "goals": 40, "assists": 45, "points": 85},
+    {"name": "David Pastrnak", "team": "Boston Bruins", "season": "2022-23", "goals": 61, "assists": 52, "points": 113},
+    {"name": "Nathan MacKinnon", "team": "Colorado Avalanche", "season": "2022-23", "goals": 42, "assists": 69, "points": 111},
+]
+
+@app.get("/duel", response_class=HTMLResponse)
+def home(request: Request):
+    return templates.TemplateResponse("duel.html", {"request": request})
+
+@app.get("/api/duel")
+def get_duel():
+    """Vracia dvoch náhodných hráčov a štatistiku na porovnanie"""
+    p1, p2 = random.sample(players, 2)
+    stat = random.choice(["goals", "assists", "points"])
+    return {"player1": p1, "player2": p2, "stat": stat}
+
+
+
+'''
 # Make sure the app actually uses the router (this is what was missing)
 app.include_router(router)
