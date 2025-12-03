@@ -197,6 +197,7 @@ def get_random_player_id_and_name(limit: int = 50, max_attempts: int = 10) -> Op
             continue
     return None
 
+
 @router.get("/api/random-player")
 def api_random_player():
     """
@@ -220,7 +221,7 @@ def hangman(request: Request):
       <link rel="stylesheet" href="{{ url_for('static', path='/styles.css') }}">
       <script src="{{ url_for('static', path='/hangman.js') }}" defer></script>
     """
-    return templates.TemplateResponse("hangman.html", {"request": request})@router.get("/guess", response_class=HTMLResponse)
+    return templates.TemplateResponse("hangman.html", {"request": request})
 @router.get("/guess", response_class=HTMLResponse)
 async def guess_get(request: Request):
     """Start a new game — always fresh player, no result message."""
@@ -255,6 +256,9 @@ async def guess_post(
         {"request": request, "player_name": correct_name, "teams": teams_list, "result": "Incorrect!"},
     )
 
+
+
+# Hangman - penalties
 
 from sqlalchemy import create_engine, Column, Integer, String, func
 from sqlalchemy.orm import sessionmaker, declarative_base, Session
@@ -301,6 +305,10 @@ def api_random_penalty(db: Session = Depends(get_db)):
     return {"word": word_obj.word}
 
 
+
+
+
+# Duel
 PLAYER_NAMES = [
     "Connor McDavid",
     "Leon Draisaitl",
@@ -338,6 +346,8 @@ def duel_frontend(request: Request):
 async def duel_api():
     """Vracia JSON s dvoma hráčmi a štatistikou."""
     p1_name, p2_name = random.sample(PLAYER_NAMES, 2)
+    # p1_name, _ = get_random_player_id_and_name()
+    # p2_name, _ = get_random_player_id_and_name()
     stat = random.choice(["goals", "assists", "points"])
 
     p1 =  playerCheck.search_player(p1_name)
