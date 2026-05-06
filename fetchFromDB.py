@@ -5,7 +5,7 @@ from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.orm import sessionmaker, declarative_base
 
 # ---------- DB setup ----------
-DATABASE_URL = "postgresql://postgres:DBPassword001@localhost/puckdoku_clone"  # nahraď svojou URI
+DATABASE_URL = "postgresql://postgres:DBPassword001@127.0.0.1:5432/puckdoku_clone"
 
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)

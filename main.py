@@ -264,7 +264,7 @@ from sqlalchemy import create_engine, Column, Integer, String, func
 from sqlalchemy.orm import sessionmaker, declarative_base, Session
 
 
-DATABASE_URL = "postgresql://postgres:xp&x8J8S@localhost/puckdoku_clone"
+DATABASE_URL = "postgresql://postgres:DBPassword001@localhost/puckdoku_clone"
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(bind=engine)
 Base = declarative_base()
