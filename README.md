@@ -42,6 +42,7 @@ Hangman mode where the words are NHL penalty names.
 
 ### Player Guessing Game (`/guess`)
 Guess the correct NHL player based on the teams he has played for. All players chosen for this game are guaranteed to have played for at least 5 teams.
+
 ---
 
 ### Duel Mode (`/duel`)
