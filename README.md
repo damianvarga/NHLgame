@@ -29,10 +29,6 @@ Players must correctly match hockey players with teams they played for across di
 
 ---
 
-### Player Guessing Game (`/guess`)
-Guess the NHL player based on the teams they have played for.
-
----
 
 ### Hangman (`/hangman`)
 Classic hangman game using NHL player names as the word list.
@@ -44,13 +40,12 @@ Hangman mode where the words are NHL penalty names.
 
 ---
 
-### Duel Mode (`/duel`)
-Compare two NHL players and guess which one has better statistical performance based on given metrics.
-
+### Player Guessing Game (`/guess`)
+Guess the correct NHL player based on the teams he has played for. All players chosen for this game are guaranteed to have played for at least 5 teams.
 ---
 
-### Guess (`/guess`)
-Guess the correct NHL player based on the teams he has played for. All players chosen for this game are guaranteed to have played for at least 5 teams.
+### Duel Mode (`/duel`)
+Compare two NHL players and guess which one has better statistical performance based on given metrics.
 
 ---
 
