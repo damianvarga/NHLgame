@@ -49,6 +49,11 @@ Compare two NHL players and guess which one has better statistical performance b
 
 ---
 
+### Guess (`/guess`)
+Guess the correct NHL player based on the teams he has played for. All players chosen for this game are guaranteed to have played for at least 5 teams.
+
+---
+
 ## Tech Stack
 
 - Python, frameworks FastAPI, Flask
